@@ -75,8 +75,17 @@ fn create_user(body: CreateUser, _req: &Request) -> Response {
 
 ## Deployment
 
-Push to GitHub and the workflow automatically:
+Deploy by pushing a version tag or manually triggering the workflow:
 
+```bash
+# Tag and push to trigger deploy
+git tag v0.1.0
+git push origin v0.1.0
+
+# Or manually: Actions → Deploy → Run workflow
+```
+
+The workflow:
 1. Builds your handler
 2. Composes with the mik-bridge
 3. Generates OpenAPI schema
@@ -85,7 +94,7 @@ Push to GitHub and the workflow automatically:
 Pull your component:
 
 ```bash
-oras pull ghcr.io/your-org/my-api:latest
+oras pull ghcr.io/your-org/my-api:0.1.0
 ```
 
 ## Local Development
