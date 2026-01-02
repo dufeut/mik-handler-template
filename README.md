@@ -76,12 +76,14 @@ fn create_user(body: CreateUser, _req: &Request) -> Response {
 ## Deployment
 
 Push to GitHub and the workflow automatically:
+
 1. Builds your handler
 2. Composes with the mik-bridge
 3. Generates OpenAPI schema
 4. Publishes to `ghcr.io/{owner}/{repo}:{version}`
 
 Pull your component:
+
 ```bash
 oras pull ghcr.io/your-org/my-api:latest
 ```
@@ -97,16 +99,15 @@ wasmtime serve -S cli=y service.wasm
 ## Prerequisites
 
 - Rust 1.89+
-- `cargo-component` - `cargo install cargo-component`
-- `wac` - `cargo install wac-cli`
-- `wasm-tools` (optional) - `cargo install wasm-tools`
+
+Tools (`cargo-component`, `wac`, `wasm-tools`) are auto-installed by `build.sh` if missing.
 
 ## Configuration
 
-| Variable | Location | Description |
-|----------|----------|-------------|
+| Variable      | Location                       | Description                      |
+| ------------- | ------------------------------ | -------------------------------- |
 | `SDK_VERSION` | `.github/workflows/deploy.yml` | mik-sdk version for bridge + WIT |
-| `version` | `Cargo.toml` | Your handler version |
+| `version`     | `Cargo.toml`                   | Your handler version             |
 
 ## Learn More
 
