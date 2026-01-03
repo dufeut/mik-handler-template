@@ -1,6 +1,6 @@
 # Build artifacts
 /target
-*.wasm
+/dist
 
 # Generated files
 /wit/deps

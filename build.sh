@@ -48,23 +48,29 @@ if [ ! -f "$BRIDGE" ]; then
 fi
 echo "    Bridge: $BRIDGE"
 
+mkdir -p dist
+
 echo "==> Composing components..."
-wac plug "$BRIDGE" --plug "$HANDLER" -o service.wasm
+wac plug "$BRIDGE" --plug "$HANDLER" -o dist/service.wasm
 
 # Strip if wasm-tools available
 if command -v wasm-tools &> /dev/null; then
   echo "==> Stripping debug info..."
-  wasm-tools strip --all service.wasm -o service.wasm
+  wasm-tools strip --all dist/service.wasm -o dist/service.wasm
 fi
 
-SIZE=$(ls -lh service.wasm | awk '{print $5}')
+echo "==> Generating OpenAPI schema..."
+cargo test --release write_openapi_json -- --ignored --nocapture 2>/dev/null
+
+SIZE=$(ls -lh dist/service.wasm | awk '{print $5}')
 echo ""
-echo "Done: service.wasm ($SIZE)"
+echo "Done: dist/"
+ls -lh dist/
 echo ""
 echo "Run with:"
-echo "  mik run service.wasm"
-echo "  wasmtime serve -S cli=y service.wasm"
-echo "  spin up --from service.wasm"
+echo "  mik run dist/service.wasm"
+echo "  wasmtime serve -S cli=y dist/service.wasm"
+echo "  spin up --from dist/service.wasm"
 echo ""
 echo "Test with:"
 echo "  curl http://localhost:8080/"

@@ -100,12 +100,12 @@ oras pull ghcr.io/your-org/my-api:0.1.0
 ## Local Development
 
 ```bash
-./build.sh            # Build + compose → service.wasm
+./build.sh            # Build → dist/service.wasm + dist/openapi.json
 
 # Run with any runtime
-mik run service.wasm
-wasmtime serve -S cli=y service.wasm
-spin up --from service.wasm
+mik run dist/service.wasm
+wasmtime serve -S cli=y dist/service.wasm
+spin up --from dist/service.wasm
 
 # Test
 curl http://localhost:8080/
