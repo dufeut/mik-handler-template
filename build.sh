@@ -26,7 +26,8 @@ fi
 # Auto-fetch WIT deps if missing
 if [ ! -d "wit/deps" ]; then
   echo "==> Fetching WIT dependencies..."
-  ./setup.sh "$VERSION"
+  mkdir -p wit/deps
+  curl -sL "https://github.com/$REPO/releases/download/v$VERSION/wit-deps.tar.gz" | tar -xz -C wit/deps
 fi
 
 echo "==> Building handler..."
