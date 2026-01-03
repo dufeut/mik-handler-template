@@ -165,6 +165,7 @@ it('my test', async () => {
 ## Prerequisites
 
 - Rust 1.89+
+- Node.js 18+ (for tests)
 
 Tools (`cargo-component`, `wac`, `wasm-tools`) are auto-installed by `scripts/build.sh` if missing.
 
