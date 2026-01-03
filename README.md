@@ -11,14 +11,11 @@ Build once, deploy to wasmtime, Spin, or wasmCloud.
 gh repo create my-api --template dufeut/mik-handler-template --clone
 cd my-api
 
-# 2. Setup dependencies
-./setup.sh
-
-# 3. Build & run locally
+# 2. Build & run
 ./build.sh
-wasmtime serve -S cli=y service.wasm
+mik run dist/service.wasm
 
-# 4. Test it
+# 3. Test it
 curl http://localhost:8080/
 curl http://localhost:8080/users
 curl -X POST http://localhost:8080/users -d '{"name":"Alice","email":"alice@example.com"}'
@@ -31,8 +28,7 @@ curl -X POST http://localhost:8080/users -d '{"name":"Alice","email":"alice@exam
 │   └── deploy.yml      # CI/CD → ghcr.io
 ├── src/lib.rs          # Your handler code
 ├── wit/world.wit       # WIT world definition
-├── setup.sh            # Fetch WIT dependencies
-├── build.sh            # Build + compose locally
+├── build.sh            # Build + compose + OpenAPI
 ├── Cargo.toml          # Dependencies
 └── README.md
 ```
