@@ -10,5 +10,4 @@ Cargo.lock
 
 # Editor
 .idea/
-.vscode/
 *.swp
