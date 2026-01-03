@@ -26,7 +26,10 @@ curl -X POST http://localhost:8080/users -d '{"name":"Alice","email":"alice@exam
 ```
 ├── .github/workflows/
 │   └── deploy.yml      # CI/CD → ghcr.io
-├── src/lib.rs          # Your handler code
+├── src/
+│   ├── lib.rs          # Routes + module wiring
+│   ├── types.rs        # Request/response types
+│   └── handlers.rs     # Route handlers
 ├── wit/world.wit       # WIT world definition
 ├── build.sh            # Build + compose + OpenAPI
 ├── Cargo.toml          # Dependencies
@@ -35,12 +38,11 @@ curl -X POST http://localhost:8080/users -d '{"name":"Alice","email":"alice@exam
 
 ## Writing Handlers
 
-Edit `src/lib.rs`:
+**`src/types.rs`** - Define your request/response types:
 
 ```rust
 use mik_sdk::prelude::*;
 
-// Define types with validation
 #[derive(Type)]
 pub struct CreateUser {
     #[field(min = 1)]
@@ -48,24 +50,42 @@ pub struct CreateUser {
     #[field(min = 5)]
     pub email: String,
 }
+```
 
-// Define routes
+**`src/handlers.rs`** - Implement route handlers:
+
+```rust
+use crate::bindings::exports::mik::core::handler::{self, Response};
+use crate::types::CreateUser;
+use mik_sdk::prelude::*;
+
+pub fn home(_req: &Request) -> Response {
+    ok!({ "status": "healthy" })
+}
+
+pub fn get_user(path: Id, _req: &Request) -> Response {
+    ok!({ "id": path, "name": "Alice" })
+}
+
+pub fn create_user(body: CreateUser, _req: &Request) -> Response {
+    ok!({ "id": random::uuid(), "name": body.name })
+}
+```
+
+**`src/lib.rs`** - Wire routes to handlers:
+
+```rust
+mod bindings;
+mod handlers;
+mod types;
+
+use handlers::*;
+use types::*;
+
 routes! {
     GET "/" => home,
     GET "/users/{id}" => get_user(path: Id),
     POST "/users" => create_user(body: CreateUser),
-}
-
-fn home(_req: &Request) -> Response {
-    ok!({ "status": "healthy" })
-}
-
-fn get_user(path: Id, _req: &Request) -> Response {
-    ok!({ "id": path.id, "name": "Alice" })
-}
-
-fn create_user(body: CreateUser, _req: &Request) -> Response {
-    ok!({ "id": random::uuid(), "name": body.name })
 }
 ```
 
