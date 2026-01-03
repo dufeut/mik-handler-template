@@ -100,9 +100,15 @@ oras pull ghcr.io/your-org/my-api:0.1.0
 ## Local Development
 
 ```bash
-./setup.sh            # Fetch WIT deps (one time)
 ./build.sh            # Build + compose → service.wasm
+
+# Run with any runtime
+mik run service.wasm
 wasmtime serve -S cli=y service.wasm
+spin up --from service.wasm
+
+# Test
+curl http://localhost:8080/
 ```
 
 ## Prerequisites
