@@ -12,7 +12,7 @@ gh repo create my-api --template dufeut/mik-handler-template --clone
 cd my-api
 
 # 2. Build & run
-./build.sh
+./scripts/build.sh
 mik run dist/service.wasm
 
 # 3. Test it
@@ -31,8 +31,12 @@ curl -X POST http://localhost:8080/users -d '{"name":"Alice","email":"alice@exam
 │   ├── types.rs        # Request/response types
 │   └── handlers.rs     # Route handlers
 ├── wit/world.wit       # WIT world definition
-├── build.sh            # Build + compose + OpenAPI
-├── test.sh             # E2E tests
+├── tests/
+│   ├── api.test.mjs    # E2E tests
+│   └── helpers.mjs     # Test utilities
+├── scripts/
+│   ├── build.sh        # Build + compose + OpenAPI
+│   └── test.sh         # Run e2e tests
 ├── Cargo.toml          # Dependencies
 └── README.md
 ```
@@ -117,7 +121,7 @@ oras pull ghcr.io/your-org/my-api:0.1.0
 ## Local Development
 
 ```bash
-./build.sh            # Build → dist/service.wasm + dist/openapi.json
+./scripts/build.sh    # Build → dist/service.wasm + dist/openapi.json
 
 # Run with any runtime
 mik run dist/service.wasm
@@ -128,28 +132,41 @@ spin up --from dist/service.wasm
 ## Testing
 
 ```bash
-./test.sh             # Builds, starts server, runs e2e tests
+./scripts/test.sh     # Builds, starts server, runs e2e tests
 ```
 
-Tests all endpoints and reports results:
+Tests use Node.js built-in test runner (Node 18+):
 
 ```
-Running tests...
+tests/api.test.mjs
+  GET /
+    ✔ returns api info
+  GET /users
+    ✔ returns user list
+  GET /users/:id
+    ✔ returns user by id
+    ✔ returns 404 for unknown user
+  POST /users
+    ✔ creates a new user
+```
 
-  PASS: GET / returns api info
-  PASS: GET /users returns user list
-  PASS: GET /users/1 returns Alice
-  PASS: GET /users/2 returns Bob
-  PASS: POST /users creates user
+Add tests in `tests/` using the helpers:
 
-Results: 5 passed, 0 failed
+```js
+import { get, post, assertOk, assertHas } from './helpers.mjs'
+
+it('my test', async () => {
+  const res = await get('/my-endpoint')
+  assertOk(res)
+  assertHas(res, 'key', 'value')
+})
 ```
 
 ## Prerequisites
 
 - Rust 1.89+
 
-Tools (`cargo-component`, `wac`, `wasm-tools`) are auto-installed by `build.sh` if missing.
+Tools (`cargo-component`, `wac`, `wasm-tools`) are auto-installed by `scripts/build.sh` if missing.
 
 ## Configuration
 
