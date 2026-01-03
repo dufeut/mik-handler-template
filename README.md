@@ -32,6 +32,7 @@ curl -X POST http://localhost:8080/users -d '{"name":"Alice","email":"alice@exam
 │   └── handlers.rs     # Route handlers
 ├── wit/world.wit       # WIT world definition
 ├── build.sh            # Build + compose + OpenAPI
+├── test.sh             # E2E tests
 ├── Cargo.toml          # Dependencies
 └── README.md
 ```
@@ -122,9 +123,26 @@ oras pull ghcr.io/your-org/my-api:0.1.0
 mik run dist/service.wasm
 wasmtime serve -S cli=y dist/service.wasm
 spin up --from dist/service.wasm
+```
 
-# Test
-curl http://localhost:8080/
+## Testing
+
+```bash
+./test.sh             # Builds, starts server, runs e2e tests
+```
+
+Tests all endpoints and reports results:
+
+```
+Running tests...
+
+  PASS: GET / returns api info
+  PASS: GET /users returns user list
+  PASS: GET /users/1 returns Alice
+  PASS: GET /users/2 returns Bob
+  PASS: POST /users creates user
+
+Results: 5 passed, 0 failed
 ```
 
 ## Prerequisites
